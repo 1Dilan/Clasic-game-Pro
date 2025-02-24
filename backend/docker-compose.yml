@@ -1,4 +1,3 @@
-
 version: '3.8'
 
 services:
@@ -39,6 +38,23 @@ services:
       - "3306:3306"
     volumes:
       - dbdata:/var/lib/mysql
+    networks:
+      - laravel_net
+
+  mobile:
+    build:
+      context: ./mobile
+      dockerfile: Dockerfile
+    container_name: react_native_mobile
+    volumes:
+      - ./mobile:/app
+      - /app/node_modules
+    ports:
+      - "8081:8081"
+      - "9090:9090"
+    environment:
+      - REACT_NATIVE_PACKAGER_HOSTNAME=localhost
+    privileged: true
     networks:
       - laravel_net
 
