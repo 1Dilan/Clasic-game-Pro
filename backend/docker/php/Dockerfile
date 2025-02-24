@@ -1,7 +1,5 @@
+FROM php:8.1-fpm
 
-FROM php:8.0-fpm
-
-# Instalar dependencias
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -11,14 +9,16 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip
 
-# Limpiar cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalar extensiones PHP
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Obtener Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Establecer directorio de trabajo
 WORKDIR /var/www/html
+
+COPY . .
+
+RUN composer install
+
+RUN chmod -R 777 storage bootstrap/cache
